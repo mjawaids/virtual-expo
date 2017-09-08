@@ -12808,62 +12808,34 @@ if (typeof jQuery === 'undefined') {
 
 var app = angular.module('virtualExpo', []);
 
-// app.service('Map', function($q) {
+app.service('Map', function ($q) {
 
-//     $scope.init = function() {
-//         var options = {
-//             center: new google.maps.LatLng(24.9015813, 67.0736155),
-//             zoom: 11,
-//             disableDefaultUI: true    
-//         }
-//         $scope.map = new google.maps.Map(
-//             document.getElementById("map"), options
-//         );
-//         $scope.places = new google.maps.places.PlacesService($scope.map);
-//     }
-
-//     $scope.addMarker = function(pos) {
-//         $scope.marker = new google.maps.Marker({
-//             map: $scope.map,
-//             position: pos,
-//             animation: google.maps.Animation.DROP
-//         });
-//         // $scope.map.setCenter(pos);
-
-//         // $scope.marker.addListener('click', function(e) {
-//         //     console.log(e.latLng.lat() + ' - ' + e.latLng.lng());
-//         // });
-
-//         return $scope.marker;
-//     }
-
-// });
-
-app.controller('ExpoController', function ($scope, $http) {
-
-    $scope.init = function () {
+    this.init = function () {
         var options = {
             center: new google.maps.LatLng(24.9015813, 67.0736155),
             zoom: 11,
             disableDefaultUI: true
         };
-        $scope.map = new google.maps.Map(document.getElementById("map"), options);
-        $scope.places = new google.maps.places.PlacesService($scope.map);
+        this.map = new google.maps.Map(document.getElementById("map"), options);
+        this.places = new google.maps.places.PlacesService(this.map);
     };
 
-    $scope.addMarker = function (pos) {
-        $scope.marker = new google.maps.Marker({
-            map: $scope.map,
+    this.addMarker = function (pos) {
+        this.marker = new google.maps.Marker({
+            map: this.map,
             position: pos,
             animation: google.maps.Animation.DROP
         });
-        // $scope.map.setCenter(pos);
+        // this.map.setCenter(pos);
 
-        return $scope.marker;
+        return this.marker;
     };
+});
+
+app.controller('ExpoController', function ($scope, $http, Map) {
 
     /**
-     * Returns current date
+     * Returns the current date
      */
     $scope.today = function () {
         var today = new Date();
@@ -12878,29 +12850,48 @@ app.controller('ExpoController', function ($scope, $http) {
             mm = '0' + mm;
         }
         today = yyyy + '-' + mm + '-' + dd;
-        console.log(today);
 
         return today;
     };
 
-    $scope.selectedEvent = null;
+    /**
+     * Parses the current URL and returns the current segment
+     */
+    getUrlSegment = function getUrlSegment() {
+        var i1 = window.location.pathname.indexOf('/') + 1;
+        var i2 = window.location.pathname.lastIndexOf('/');
+        var len = i2 - i1;
+        if (i2 == 0) len = window.location.pathname.length;
 
-    // parse url
-    var i1 = window.location.pathname.indexOf('/') + 1;
-    var i2 = window.location.pathname.lastIndexOf('/');
-    var len = i2 - i1;
-    if (i2 == 0) len = window.location.pathname.length;
+        return window.location.pathname.substr(i1, len);
+    };
 
-    $scope.action = window.location.pathname.substr(i1, len);
+    /**
+     * Get the Event ID from URL
+     */
+    getEventId = function getEventId() {
+        return window.location.pathname.substr(window.location.pathname.lastIndexOf('/') + 1);
+    };
 
-    if ($scope.action == "" || $scope.action == "current" || $scope.action == "expired") {
-        // initialize map
-        $scope.init();
+    /**
+     * Add marker on the map and listen for click events
+     */
+    addMarkerOnMap = function addMarkerOnMap(pos, event) {
+        var marker = Map.addMarker(pos);
+        marker.addListener('click', function () {
+            $scope.$apply(function () {
+                $scope.selectedEvent = event;
+            });
+        });
+    };
 
-        // var url = '/' + ($scope.action == "") ? 'events' : $scope.action;
-        var url = '/events/' + $scope.action;
+    /**
+     * Get events data
+     */
+    getEvents = function getEvents(action) {
+        var url = '/events/' + action; //$scope.action;
 
-        // request to display all the events
+        // request to get all the events
         $http.get(url).then(function (events) {
             $scope.events = events.data;
 
@@ -12911,21 +12902,38 @@ app.controller('ExpoController', function ($scope, $http) {
                     lng: parseFloat(event.location.longitude)
                 };
 
-                var marker = $scope.addMarker(pos);
-                marker.addListener('click', function () {
-                    $scope.$apply(function () {
-                        $scope.selectedEvent = event;
-                    });
-                });
+                // add marker on map and listen for click event
+                addMarkerOnMap(pos, event);
             });
         });
-    } else if ($scope.action == 'event') {
-        // request to display all the stands for an event
-        var eventid = window.location.pathname.substr(i2 + 1);
+    };
 
+    /**
+     * Get the stands data for an event
+     */
+    getStands = function getStands(eventid) {
         $http.get('/events/' + eventid).then(function (stands) {
             $scope.stands = stands.data;
         });
+    };
+
+    /******************************************************************************** */
+
+    // The event selected on map
+    $scope.selectedEvent = null;
+
+    // get action based on current segment
+    $scope.action = getUrlSegment();
+
+    if ($scope.action == "" || $scope.action == "current" || $scope.action == "expired") {
+        // initialize map
+        Map.init();
+
+        // get all the events and add marker on the map
+        getEvents($scope.action);
+    } else if ($scope.action == 'event') {
+        // get all the stands for an event
+        getStands(getEventId());
     }
 });
 
