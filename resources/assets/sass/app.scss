@@ -1,0 +1,21 @@
+
+// Fonts
+@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+
+// Variables
+@import "variables";
+
+// img {
+//     width: 100px;
+//     height: 100px;
+// }
+
+// Bootstrap
+@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+
+#map { 
+    height: 400px;
+    margin: 20px 0;
+    border-radius: 5px;
+    // border: 1px solid silver;
+}
