@@ -14,8 +14,22 @@ class Analytic extends Model
     /**
      * Get the stands for the analytic.
      */
-     public function stand()
-     {
+    public function stand()
+    {
         return $this->belongsTo('App\Stand');
-     }
+    }
+
+    /**
+     *  Record the user visit
+     */
+    public static function recordVisit($stand_id)
+    {
+        $analytic = static::firstOrCreate(
+            ['stand_id' => $stand_id],
+            ['visits' => 0]
+        );
+        
+        $analytic->visits++;
+        $analytic->save();
+    }
 }

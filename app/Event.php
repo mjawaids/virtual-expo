@@ -21,4 +21,31 @@ class Event extends Model
     {
         return $this->belongsTo('App\Location');
     }
+
+    /*
+    *   Get upcoming events
+    */
+    public static function getUpcoming()
+    {
+        return static::where('start_date', '>', now())->with('location')->get();
+    }
+
+    /*
+    *   Get current events
+    */
+    public static function getCurrent()
+    {
+        return static::where([
+                            ['start_date', '<', now()],
+                            ['end_date', '>', now()],
+                        ])->with('location')->get();
+    }
+
+    /*
+    *   Get Past events
+    */
+    public static function getPast()
+    {
+        return static::where('end_date', '<', now())->with('location')->get();
+    }
 }

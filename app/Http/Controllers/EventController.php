@@ -14,7 +14,7 @@ class EventController extends Controller
      */
     public function index()
     {
-        return Event::where('start_date', '>', now())->with('location')->get();
+        return Event::getUpcoming();
     }
 
     /**
@@ -24,10 +24,7 @@ class EventController extends Controller
      */
      public function current()
      {
-         return Event::where([
-             ['start_date', '<', now()],
-             ['end_date', '>', now()],
-            ])->with('location')->get();
+        return Event::getCurrent();
      }
 
      /**
@@ -37,7 +34,7 @@ class EventController extends Controller
      */
     public function expired()
     {
-        return Event::where('end_date', '<', now())->with('location')->get();
+        return Event::getPast();
     }
 
     /**

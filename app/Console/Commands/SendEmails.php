@@ -43,7 +43,9 @@ class SendEmails extends Command
     {
         $this->info('Stands info retrieving...');
 
+        // get all the analytics for all stands
         $analytics = Analytic::with('stand')->get();
+
         foreach($analytics as $a)
         {
             $email = $a->stand->company->email;
@@ -51,8 +53,9 @@ class SendEmails extends Command
             $stand = $a->stand;
             $event = $a->stand->event;
 
+            // send the stats email to company email addresses
             \Mail::to($email)->send(
-                new VisitorAnalytics($email, $visitors, $stand, $event)
+                new VisitorAnalytics( $email, $visitors, $stand, $event )
             );
         }
 

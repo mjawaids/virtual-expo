@@ -44,7 +44,7 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         // get stand id
-        $stand = Stand::find(request('stand'));
+        $stand = Stand::find( request('stand') );
         
         // check if stand is not already reserved
         if($stand->reserved)
@@ -55,43 +55,21 @@ class ReservationController extends Controller
 
         // TODO: validation
 
-        // get company details
-        $name           = request('name');
-        $logo           = $request->hasFile('logo') ? request('logo') : NULL;
-        $admin          = request('admin');
-        $email          = request('email');
-        $phone          = request('phone');
-        $website        = request('website');
-        $facebook       = request('facebook');
-        $twitter        = request('twitter');
-        $marketing_doc  = $request->hasFile('marketing_doc') ? $request->marketing_doc->store('docs') : NULL;
-
-        $logoFileName = $logo->hashName();
-        $logo->move(public_path() . '/storage/images/', $logoFileName);
-
-        $company = Company::where('name', '=', $name)->first();
+        // get company data from request
+        $company_data = $this->getCompanyData($request);
+        
+        // get already saved company if any 
+        $company = Company::getCompanybyName( $company_data['name'] );
 
         // check if company exists
         if(!isset($company))
         {
-            // save company details if not
-            $company = Company::create([
-                'name' => $name,
-                'logo' => $logoFileName,
-                'admin' => $admin,
-                'email' => $email,
-                'phone' => $phone,
-                'website' => $website,
-                'facebook' => $facebook,
-                'twitter' => $twitter,
-                'marketing_doc' => $marketing_doc
-            ]);
+            // save the company details
+            $company = Company::create( $company_data );
         }
         
         // update stand reservation status
-        $stand->reserved = true;
-        $stand->company()->associate($company);
-        $stand->save();
+        $stand->reserve($company);
 
         session()->flash('success', 'Stand has been reserved.');
 
@@ -141,5 +119,40 @@ class ReservationController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /*
+    *   Save the logo file on filesystem
+    */
+    private function saveLogo($logo)
+    {
+        $logoFileName = $logo->hashName();
+        $logo->move(public_path() . '/storage/images/', $logoFileName);
+
+        return $logoFileName;
+    }
+
+    /*
+    *   Get the company data from submitted form request
+    */
+    private function getCompanyData(Request $request)
+    {
+        // save logo file
+        $logo = $request->hasFile('logo') ? request('logo') : NULL;
+        $logoFileName = $this->saveLogo($logo);
+        
+        // return company details
+        return [
+        'name'           => request('name'),
+        'logo'           => $logoFileName,
+        'admin'          => request('admin'),
+        'email'          => request('email'),
+        'phone'          => request('phone'),
+        'website'        => request('website'),
+        'facebook'       => request('facebook'),
+        'twitter'        => request('twitter'),
+        'marketing_doc'  => $request->hasFile('marketing_doc') ? 
+                                $request->marketing_doc->store('docs') : NULL
+        ];
     }
 }

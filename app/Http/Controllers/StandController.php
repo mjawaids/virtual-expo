@@ -16,7 +16,7 @@ class StandController extends Controller
      */
     public function index(Event $event)
     {
-        return Stand::where('event_id', '=', $event->id)->with('company')->with('event')->get();
+        return Stand::getEventStands($event->id);
     }
 
     /**
@@ -49,12 +49,7 @@ class StandController extends Controller
     public function show(Stand $stand)
     {
         // Record user visit
-        $analytic = Analytic::firstOrCreate(
-            ['stand_id' => $stand->id],
-            ['visits' => 0]
-        );
-        $analytic->visits++;
-        $analytic->save();
+        Analytic::recordVisit($stand->id);
 
         // Display Stand info
         return view('stand', compact('stand'));

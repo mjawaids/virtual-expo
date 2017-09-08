@@ -17,4 +17,12 @@ class Company extends Model
      {
          return $this->hasMany('App\Stand');
      }
+
+     /*
+     *  Get company details
+     */
+     public static function getCompanybyName($name)
+     {
+        return Company::where('name', '=', $name)->first();
+     }
 }
