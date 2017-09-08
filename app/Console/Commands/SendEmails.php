@@ -48,15 +48,18 @@ class SendEmails extends Command
 
         foreach($analytics as $a)
         {
-            $email = $a->stand->company->email;
-            $visitors = $a->visits;
-            $stand = $a->stand;
-            $event = $a->stand->event;
+            if($a->stand->event->end_date > now())
+            {
+                $email = $a->stand->company->email;
+                $visitors = $a->visits;
+                $stand = $a->stand;
+                $event = $a->stand->event;
 
-            // send the stats email to company email addresses
-            \Mail::to($email)->send(
-                new VisitorAnalytics( $email, $visitors, $stand, $event )
-            );
+                // send the stats email to company email addresses
+                \Mail::to($email)->send(
+                    new VisitorAnalytics( $email, $visitors, $stand, $event )
+                );
+            }
         }
 
         $this->info('Emails Sent!');
