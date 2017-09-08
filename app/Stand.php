@@ -25,4 +25,12 @@ class Stand extends Model
     {
         return $this->belongsTo('App\Company');
     }
+
+    /**
+     * Get the analytics of the stand.
+     */
+    public function analytics()
+    {
+        return $this->hasOne('App\Analytic');
+    }
 }

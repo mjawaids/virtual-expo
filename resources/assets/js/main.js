@@ -56,6 +56,9 @@ app.controller('ExpoController', function($scope, $http) {
         return $scope.marker;
     }
 
+    /**
+     * Returns current date
+     */
     $scope.today = function() {
         var today = new Date();
         var dd = today.getDate();
@@ -70,6 +73,7 @@ app.controller('ExpoController', function($scope, $http) {
         } 
         today = yyyy + '-' + mm + '-' + dd;
         console.log(today);
+        
         return today;
     }
 
