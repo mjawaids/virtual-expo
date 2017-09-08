@@ -9,7 +9,7 @@
                 <div class="panel-body">
             
                     <div class="form-group">
-                        <img class="img-fluid" src="/storage/images/{{ $stand->company->logo }}">
+                        <img class="img-fluid" style="width:200px;height:200px;" src="/storage/images/{{ $stand->company->logo }}">
                     </div>
 
                     <div class="form-group">
@@ -27,27 +27,27 @@
 
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" value="{{ $stand->company->email }}" disabled>
+                        <a class="form-control" href="mailto:{{ $stand->company->email }}">{{ $stand->company->email }}</a>
                     </div>
 
                     <div class="form-group">
                         <label for="phone">Phone</label>
-                        <input type="phone" class="form-control" value="{{ $stand->company->phone }}" disabled>
+                        <a class="form-control" href="tel:{{ $stand->company->phone }}">{{ $stand->company->phone }}</a>
                     </div>
 
                     <div class="form-group">
                         <label for="website">Website</label>
-                        <input type="text" class="form-control" value="{{ $stand->company->website }}" disabled>
+                        <a class="form-control" href="{{ $stand->company->website }}">{{ $stand->company->website }}</a>
                     </div>
 
                     <div class="form-group">
                         <label for="facebook">Facebook</label>
-                        <input type="text" class="form-control" value="{{ $stand->company->facebook }}" disabled>
+                        <a class="form-control" href="{{ $stand->company->facebook }}">{{ $stand->company->facebook }}</a>
                     </div>
 
                     <div class="form-group">
                         <label for="twitter">Twitter</label>
-                        <input type="text" class="form-control" value="{{ $stand->company->twitter }}" disabled>
+                        <a class="form-control" href="//twitter.com/{{ $stand->company->twitter }}">{{ $stand->company->twitter }}</a>
                     </div>
 
                 </div>

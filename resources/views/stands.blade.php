@@ -47,11 +47,21 @@
                                                     <strong>Contact Details:</strong>
                                                     <ul>
                                                         <li><strong>Admin:</strong> @{{ stand.company.admin }}</li>
-                                                        <li><strong>Email:</strong> @{{ stand.company.email }}</li>
-                                                        <li><strong>Phone:</strong> @{{ stand.company.phone }}</li>
-                                                        <li><strong>Website:</strong> @{{ stand.company.website }}</li>
-                                                        <li><strong>Facebook:</strong> @{{ stand.company.facebook }}</li>
-                                                        <li><strong>Twitter:</strong> @{{ stand.company.twitter }}</li>
+                                                        <li><strong>Email:</strong> 
+                                                            <a href="mailto:@{{ stand.company.email }}"> @{{ stand.company.email }} </a>
+                                                        </li>
+                                                        <li><strong>Phone:</strong> 
+                                                            <a href="tel:@{{ stand.company.phone }}">@{{ stand.company.phone }} </a>
+                                                        </li>
+                                                        <li><strong>Website:</strong> 
+                                                            <a href="@{{ stand.company.website }}"> @{{ stand.company.website }} </a>
+                                                        </li>
+                                                        <li><strong>Facebook:</strong> 
+                                                            <a href="@{{ stand.company.facebook }}"> @{{ stand.company.facebook }} </a>
+                                                        </li>
+                                                        <li><strong>Twitter:</strong> 
+                                                            <a href="//twitter.com/@{{ stand.company.twitter }}"> @{{ stand.company.twitter }} </a>
+                                                        </li>
                                                     </ul>
                                                 </li>
                                             </ul>
