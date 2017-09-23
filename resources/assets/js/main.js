@@ -114,14 +114,57 @@ app.controller('ExpoController', function($scope, $http, Map) {
         $http.get('/events/' + eventid).then(
             function(stands) {
                 $scope.stands = stands.data;
+
+                // for all stands
+                //  attach event listener
+                //  show as reserved if it is
+                angular.forEach($scope.stands, function(stand) {
+                    var st = selectStandElement(stand.name);
+
+                    listenAndActOnStandClick(st, stand);
+
+                    if(stand.reserved)
+                    {
+                        reserveStand(st);
+                    }
+                });
             }
         );
+    }
+
+    /**
+     * Listen for click event on stand and perform action
+     */
+    listenAndActOnStandClick = function(st, stand) {
+        st.on('click', function(e) {
+            
+            $scope.$apply(function(){
+                $scope.selectedStand = stand;
+            });
+            
+        }.bind(this));
+    }
+
+    /**
+     * Update stand styling to show as reserved
+     */
+    reserveStand = function(stand) {
+        stand.style("fill", "#d6d6d6");
+    }
+
+    /**
+     * return the stand dom element
+     */
+    selectStandElement = function(name) {
+        return d3.selectAll("#"+name);
     }
 
     /******************************************************************************** */
 
     // The event selected on map
     $scope.selectedEvent = null;
+    // The stand selected on hall map
+    $scope.selectedStand = null;
     
     // get action based on current segment
     $scope.action = getUrlSegment();

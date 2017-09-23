@@ -80,6 +80,7 @@
     {{--  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>  --}}
     
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2CzzxH7VsJNWcKobDZzEKfZoyzp4QYkI&libraries=places"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="{{ asset('js/app.js') }}"></script>
     
 </body>
